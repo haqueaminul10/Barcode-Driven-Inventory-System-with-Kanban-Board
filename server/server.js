@@ -1,10 +1,23 @@
 const express = require('express');
 const app = express();
+const axios = require('axios');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const cors = require('cors');
 app.use(cors());
+
+app.get('/api/product/:barcode', async (req, res) => {
+  const { barcode } = req.params;
+  try {
+    const response = await axios.get(
+      `https://products-test-aci.onrender.com/product/${barcode}`
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message });
+  }
+});
 
 const mongoose = require('mongoose');
 mongoose.connect(
